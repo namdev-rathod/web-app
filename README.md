@@ -1,8 +1,13 @@
 # Welcome to your CDK TypeScript project
 
-This is a blank project for CDK development with TypeScript.
+This is Web Server project where below component configured.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+1. EC2 in different availability zone
+2. Create application load balancer
+3. Configure ACM SSL certificate
+4. Port forwarding HTTP to HTTPS
+5. Domain mapping
+
 
 ## Useful commands
 
