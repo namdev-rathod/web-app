@@ -4,5 +4,31 @@
     "ap-south-1b",
     "ap-south-1c"
   ],
-  "ssm:account=666930281169:parameterName=/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64:region=ap-south-1": "ami-0ded8326293d3201b"
+  "ssm:account=666930281169:parameterName=/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64:region=ap-south-1": "ami-0ded8326293d3201b",
+  "vpc-provider:account=666930281169:filter.vpc-id=vpc-0e0e20c7600fd9b59:region=ap-south-1:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-0e0e20c7600fd9b59",
+    "vpcCidrBlock": "192.168.0.0/16",
+    "ownerAccountId": "666930281169",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "Public",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-0a68e97507e0c7fae",
+            "cidr": "192.168.0.0/20",
+            "availabilityZone": "ap-south-1a",
+            "routeTableId": "rtb-076d1e7b59112cdba"
+          },
+          {
+            "subnetId": "subnet-0148d982d214587dd",
+            "cidr": "192.168.16.0/20",
+            "availabilityZone": "ap-south-1b",
+            "routeTableId": "rtb-076d1e7b59112cdba"
+          }
+        ]
+      }
+    ]
+  }
 }

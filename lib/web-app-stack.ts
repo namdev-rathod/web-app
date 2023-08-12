@@ -15,6 +15,7 @@ import * as elasticloadbalancingv2 from "aws-cdk-lib/aws-elasticloadbalancingv2"
 import * as elasticloadbalancingv2targets from "aws-cdk-lib/aws-elasticloadbalancingv2-targets";
 
 
+
 // export class MyLoadBalancerStack extends cdk.Stack {
 //   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
 //     super(scope, id, props);
@@ -24,23 +25,23 @@ export class WebAppStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // Get existing VPC
-    // const vpc = ec2.Vpc.fromLookup(this, 'VPC', {
-    //   vpcId: props.VpcId
-    // })
+   // Get existing VPC
+    const vpc = ec2.Vpc.fromLookup(this, 'VPC', {
+      vpcId: 'vpc-0e0e20c7600fd9b59', // add here your existing vpc id
+    })
 
         // Create a new VPC with two public subnets (one in each AZ) and CIDR 10.0.0.0/16
-        const vpc = new Vpc(this, 'MyVpc', {
-          cidr: '10.0.0.0/16',
-          vpcName: 'webapp-vpc',
-          maxAzs: 2,
-          subnetConfiguration: [
-            {
-              name: 'Public',
-              subnetType: SubnetType.PUBLIC,
-            },
-          ],
-        });
+        // const vpc = new Vpc(this, 'MyVpc', {
+        //   cidr: '10.0.0.0/16',
+        //   vpcName: 'webapp-vpc',
+        //   maxAzs: 2,
+        //   subnetConfiguration: [
+        //     {
+        //       name: 'Public',
+        //       subnetType: SubnetType.PUBLIC,
+        //     },
+        //   ],
+        // });
 
       //  Create VPC and two public subnets in different availability zones
         // const vpc = new ec2.Vpc(this, 'MyVPC', {
@@ -166,6 +167,13 @@ export class WebAppStack extends cdk.Stack {
         protocol: elbv2.Protocol.HTTP,
       },
     });
+
+    // Register instances to the Target Group
+        // const instanceTarget1 = new elbv2.ApplicationTargetGroup(this, 'InstanceTarget1', {
+        //   TargetGroup,
+        //     port: 80,
+        //     targets: [ec2Instance1],
+        //   });
 
          // TargetGroup.addTarget(ec2Instance1);
          // TargetGroup.addTarget(ec2Instance2);
