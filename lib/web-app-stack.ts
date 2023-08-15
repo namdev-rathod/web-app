@@ -13,12 +13,7 @@ import * as targets from 'aws-cdk-lib/aws-route53-targets';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import * as elasticloadbalancingv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import * as elasticloadbalancingv2targets from "aws-cdk-lib/aws-elasticloadbalancingv2-targets";
-
-
-
-// export class MyLoadBalancerStack extends cdk.Stack {
-//   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-//     super(scope, id, props);
+import { InstanceTarget } from 'aws-cdk-lib/aws-elasticloadbalancingv2-targets';
 
 
 export class WebAppStack extends cdk.Stack {
@@ -30,7 +25,7 @@ export class WebAppStack extends cdk.Stack {
       vpcId: 'vpc-0e0e20c7600fd9b59', // add here your existing vpc id
     })
 
-        // Create a new VPC with two public subnets (one in each AZ) and CIDR 10.0.0.0/16
+    // Create a new VPC with two public subnets (one in each AZ) and CIDR 10.0.0.0/16
         // const vpc = new Vpc(this, 'MyVpc', {
         //   cidr: '10.0.0.0/16',
         //   vpcName: 'webapp-vpc',
@@ -43,26 +38,7 @@ export class WebAppStack extends cdk.Stack {
         //   ],
         // });
 
-      //  Create VPC and two public subnets in different availability zones
-        // const vpc = new ec2.Vpc(this, 'MyVPC', {
-        //   vpcName: 'webapp-vpc',
-        //   cidr: '10.0.0.0/16',
-        //   maxAzs: 2,
-        //   subnetConfiguration: [
-        //     {
-        //       cidrMask: 24,
-        //       name: 'public-subnet-1',
-        //       subnetType: ec2.SubnetType.PUBLIC,
-        //     },
-        //     {
-        //       cidrMask: 24,
-        //       name: 'public-subnet-2',
-        //       subnetType: ec2.SubnetType.PUBLIC,
-        //     },
-        //   ],
-        // });
-
-    //  create Security Group for the Instance
+    //  create Security Group for the EC2 Instance
       const webserverSG = new ec2.SecurityGroup(this, 'webserver-sg', {
         securityGroupName: ('web-server-poc-sg'),
         vpc,
@@ -96,7 +72,7 @@ export class WebAppStack extends cdk.Stack {
     // Create EBS volume with custom size
       const rootVolume: ec2.BlockDevice = {
         deviceName: '/dev/xvda', // Use the root device name from Step 1
-        volume: ec2.BlockDeviceVolume.ebs(15), // Override the volume size in Gibibytes (GiB)
+        volume: ec2.BlockDeviceVolume.ebs(15), // Create customize the volume size in GB
       };
 
 
@@ -134,10 +110,11 @@ export class WebAppStack extends cdk.Stack {
           securityGroup: webserverSG,
         });
 
-    // load contents of script
+    // configure user data script for EC2 instance.
       const userDataScript1 = readFileSync('./lib/user-data1.sh', 'utf8');
       const userDataScript2 = readFileSync('./lib/user-data2.sh', 'utf8');
-    // add the User Data script to the Instance
+
+    // add the User Data script to the EC2 Instance
       ec2Instance1.addUserData(userDataScript1);
       ec2Instance2.addUserData(userDataScript2);
 
@@ -147,7 +124,6 @@ export class WebAppStack extends cdk.Stack {
           vpc,
           securityGroup: webserverSG,
           internetFacing: true, // Set to false for internal load balancer
-          http2Enabled: true,
             vpcSubnets: {
               subnetType: ec2.SubnetType.PUBLIC, // Choose the appropriate subnet type
               availabilityZones: ['ap-south-1a', 'ap-south-1b'], // Specify the desired availability zone
@@ -168,24 +144,11 @@ export class WebAppStack extends cdk.Stack {
       },
     });
 
-    // Register instances to the Target Group
-        // const instanceTarget1 = new elbv2.ApplicationTargetGroup(this, 'InstanceTarget1', {
-        //   TargetGroup,
-        //     port: 80,
-        //     targets: [ec2Instance1],
-        //   });
+    // Attach instance to target group
+      TargetGroup.addTarget(new InstanceTarget(ec2Instance1));
+      TargetGroup.addTarget(new InstanceTarget(ec2Instance2));
 
-         // TargetGroup.addTarget(ec2Instance1);
-         // TargetGroup.addTarget(ec2Instance2);
-      
-          // Create an HTTP listener
-        //   const httpListener = loadBalancer.addListener('HttpListener', {
-        //     port: 80,
-        //     defaultTargetGroups: [TargetGroup],
-        //   });
-
-
-        // Create an HTTPS listener
+    // Create an HTTPS listener For Load Balancer
         const certificateArn = 'arn:aws:acm:ap-south-1:666930281169:certificate/61427c62-07d7-45c8-b46f-c5fbac653c4a'; // Replace with your ACM certificate ARN
         const httpsListener = loadBalancer.addListener('HttpsListener', {
           port: 443,
@@ -204,14 +167,14 @@ export class WebAppStack extends cdk.Stack {
 
       // Get an existing hosted zone (replace 'YOUR_HOSTED_ZONE_ID' with actual ID)
         const hostedZone = route53.HostedZone.fromHostedZoneAttributes(this, 'ExistingHostedZone', {
-          hostedZoneId: 'Z0808885ROJ6FHJCCCXN',
-          zoneName: 'awsguruji.net',
+          hostedZoneId: 'Z0808885ROJ6FHJCCCXN', // Replace with your actual Route53 hosted zone
+          zoneName: 'awsguruji.net', // Replace with your actual domain name in Route53
         });
 
       // Create a DNS record for the load balancer
         new route53.ARecord(this, 'WebAppDNSRecord', {
           zone: hostedZone,
-          recordName: 'web',
+          recordName: 'app',  // Replace record name which one you want to configure Like https://app.awsguruji.net
           target: route53.RecordTarget.fromAlias(new targets.LoadBalancerTarget(loadBalancer)),
         });
 
