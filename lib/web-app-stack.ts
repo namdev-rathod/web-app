@@ -174,7 +174,7 @@ export class WebAppStack extends cdk.Stack {
       // Create a DNS record for the load balancer
         new route53.ARecord(this, 'WebAppDNSRecord', {
           zone: hostedZone,
-          recordName: 'app',  // Replace record name which one you want to configure Like https://app.awsguruji.net
+          recordName: 'web',  // Replace record name which one you want to configure Like https://app.awsguruji.net
           target: route53.RecordTarget.fromAlias(new targets.LoadBalancerTarget(loadBalancer)),
         });
 
