@@ -1,12 +1,14 @@
 # Welcome to your CDK TypeScript project
 
-This is Web Server project where below component configured.
+This is Web Server project where below component configured by using CDK typescript code.
 
-1. EC2 in different availability zone
+1. Create 2 EC2 in different availability zones
 2. Create application load balancer
-3. Configure ACM SSL certificate
-4. Port forwarding HTTP to HTTPS
+3. Configure ACM SSL certificate into Load Balancer
+4. Port forwarding HTTP to HTTPS in load balancer
 5. Domain mapping
+6. Security group with particular inbound rules
+7. User data script to install nginx server on EC2
 
 
 ## Useful commands
